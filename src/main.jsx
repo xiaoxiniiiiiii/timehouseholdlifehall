@@ -2,62 +2,26 @@ import { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
 
-const products = [
-  ['Warm Loom Rug', '地毯', '暖陶土几何编织地毯', 299, 'rug.webp'],
-  ['Sage Linen Pair', '抱枕', '鼠尾草绿亚麻抱枕套装', 129, 'pillows.webp'],
-  ['Golden Weave Trivet', '厨房用品', '金色棋盘编织隔热垫', 49, 'trivet.webp'],
-  ['Mango Wood Bowl', '厨房用品', '芒果木浅口果盘', 169, 'fruit-bowl.webp'],
-  ['Quiet Pantry Jars', '厨房用品', '素色陶瓷调味罐三件套', 119, 'spice-jars.webp'],
-  ['Countertop Shelf', '厨房用品', '黑色金属双层厨房置物架', 199, 'kitchen-rack.webp'],
-  ['Clay Woven Curtain', '浴室用品', '陶土色棉质浴帘', 239, 'shower-curtain.webp'],
-  ['Cloudstep Bath Mat', '浴室用品', '雾蓝厚绒浴室防滑垫', 99, 'bath-mat.webp'],
-  ['Brass Towel Rail', '浴室用品', '拉丝黄铜毛巾架', 149, 'towel-rail.webp'],
-  ['Oak Edge Shelf', '浴室用品', '橡木边框浴室置物架', 179, 'bath-shelf.webp'],
-  ['Vanity Duo Tray', '浴室用品', '奶油色陶瓷洗漱收纳盘', 89, 'vanity-tray.webp'],
-  ['Seagrass Handled Basket', '收纳用品', '天然海草双耳收纳篮', 139, 'storage-basket.webp'],
-].map(([name, category, description, price, image], index) => ({ id: index + 1, name, category, description, price, image }))
+const groups = [
+  ['Furniture', [['沙发', 'Sora Linen Sofa', '浅沙色亚麻三人沙发', 899], ['床', 'Mori Platform Bed', '橡木低台双人床', 799], ['衣柜', 'Haven Wardrobe', '烟熏橡木双门衣柜', 699], ['餐桌', 'Forma Dining Table', '胡桃木六人餐桌', 649], ['茶几', 'Arc Coffee Table', '弧形橡木茶几', 299], ['电视柜', 'Line TV Cabinet', '藤编门电视柜', 429], ['斗柜', 'Stack Chest', '五斗抽屉柜', 589], ['餐边柜', 'Noma Sideboard', '奶油色餐边柜', 539], ['书柜', 'Grid Bookcase', '开放式模块书柜', 459], ['书桌', 'Plain Writing Desk', '极简木质书桌', 329]]],
+  ['Soft Furnishings', [['椅子', 'Dune Lounge Chair', '沙色休闲椅', 259], ['餐椅', 'Oak Dining Chair', '弯木餐椅', 159], ['梳妆台', 'Mira Vanity', '带抽屉梳妆台', 379], ['床头柜', 'Nook Nightstand', '圆角床头柜', 189], ['鞋柜', 'Tuck Shoe Cabinet', '窄型翻斗鞋柜', 279], ['玄关柜', 'Entry Console', '玄关收纳台', 319], ['休闲椅', 'Cove Accent Chair', '鼠尾草绿休闲椅', 289], ['酒柜', 'Cellar Bar Cabinet', '小型木质酒柜', 499], ['储物柜', 'Fold Storage Cabinet', '折叠门储物柜', 349], ['户外桌椅', 'Patio Bistro Set', '户外藤编桌椅套装', 399]]],
+  ['Daily Living', [['床上四件套', 'Cloud Cotton Bedding', '纯棉暖白四件套', 119], ['收纳箱', 'Canvas Storage Trunk', '帆布盖式收纳箱', 49], ['地垫', 'Pebble Floor Mat', '鹅卵石纹入户地垫', 39], ['被子', 'Airy Summer Quilt', '轻柔夏凉被', 89], ['枕头', 'Rest Support Pillow', '高弹支撑枕', 45], ['床笠', 'Washed Fitted Sheet', '水洗棉床笠', 59], ['浴巾', 'Terry Bath Towel', '厚绒纯棉浴巾', 35], ['浴袍', 'Navy Cloud Robe', '深海军蓝纯棉浴袍', 69], ['洗衣篮', 'Loop Laundry Basket', '编织双耳洗衣篮', 59], ['收纳盒', 'Clear Stack Box', '布艺堆叠收纳盒', 29]]],
+  ['Decor & Lighting', [['收纳袋', 'Linen Storage Bag', '亚麻衣物收纳袋', 25], ['衣架', 'Natural Hangers', '天然木质衣架套装', 25], ['防尘罩', 'Garment Dust Cover', '衣物防尘罩', 19], ['纸巾盒', 'Woven Tissue Cover', '藤编纸巾盒', 29], ['家居拖鞋', 'Quiet House Slippers', '软底家居拖鞋', 25], ['香薰', 'Scented Wood Sachet', '天然木片香薰挂饰', 39], ['台灯', 'Moss Table Lamp', '布艺暖光台灯', 79], ['落地灯', 'Arc Floor Lamp', '弧形落地灯', 149], ['壁灯', 'Brass Wall Light', '拉丝金属壁灯', 99], ['装饰时钟', 'Tempo Clock', '静音装饰时钟', 59]]],
+  ['Kitchen & Bath', [['木质装饰托盘', 'Walnut Decor Tray', '天然胡桃木装饰托盘', 49], ['烛台', 'Wooden Candle Stand', '木质烛台', 35], ['雕塑摆件', 'Bamboo Form Sculpture', '竹木几何雕塑摆件', 59], ['餐垫', 'Woven Placemat', '天然纤维餐垫四件套', 35], ['桌布', 'Washed Tablecloth', '水洗棉桌布', 49], ['隔热垫', 'Braided Trivet', '编织隔热垫', 19], ['厨房置物架', 'Counter Shelf', '双层厨房置物架', 49], ['浴帘', 'Clay Shower Curtain', '陶土色浴帘', 59], ['浴室防滑垫', 'Cloud Bath Mat', '雾蓝浴室防滑垫', 39], ['毛巾架', 'Brushed Towel Rail', '拉丝金属毛巾架', 45]]],
+]
+const products = groups.flatMap(([category, items], groupIndex) => items.map(([type, name, description, price], index) => ({ id: groupIndex * 10 + index + 1, category, type, name, description, price, image: `catalog-${String(groupIndex * 10 + index + 1).padStart(2, '0')}.webp` })))
+const policyData = { payment: ['付款政策', '支持 PayPal、Visa 与信用卡选项。当前结算页为演示流程，提交后不会产生真实扣款。正式上线前请接入支付服务商账户、服务器订单校验与退款流程。'], returns: ['退货与退款', '签收后 14 天内可提交退货申请。商品须保持未使用、未清洗并保留完整包装。审核通过后按原支付方式退款。'], cancellation: ['取消政策', '订单尚未进入发货流程前可联系客服取消。已发货订单需按照退货流程处理。'], about: ['关于我们', '拾光（香港）貿易有限公司致力于为日常生活提供实用、耐看、易融入空间的家居用品。'], shipping: ['发货政策', '订单确认后通常在 2–5 个工作日内处理。大件家具的运输时间与费用以结算页显示为准。'], tracking: ['订单追踪', '发货后我们会通过订单邮箱发送物流单号。演示站暂不连接真实物流接口。'], terms: ['服务条款（17 个部分）', '1. 条款接受\n2. 网站使用\n3. 商品信息\n4. 价格与库存\n5. 订单确认\n6. 付款方式\n7. 配送范围\n8. 收货验货\n9. 退货申请\n10. 退款处理\n11. 取消订单\n12. 知识产权\n13. 用户内容\n14. 隐私与数据\n15. 责任限制\n16. 条款修改\n17. 联系方式'], privacy: ['隐私政策', '我们仅在处理订单、配送、客服和网站安全所必需的范围内使用信息。不会出售个人信息。'], dmca: ['DMCA', '如你认为网站内容侵犯版权，请发送作品说明、侵权页面、权利证明与联系方式至 Tymelight@outlook.com。'] }
 
-function App() {
-  const [category, setCategory] = useState('全部商品')
-  const [cartCount, setCartCount] = useState(0)
-  const categories = ['全部商品', ...new Set(products.map((product) => product.category))]
-  const visibleProducts = useMemo(() => category === '全部商品' ? products : products.filter((product) => product.category === category), [category])
-
-  return (
-    <div className="page-shell">
-      <header className="site-header">
-        <a className="brand" href="/">TIME HOUSEHOLD <span>LIFE HALL</span></a>
-        <div className="header-note">把日常过得更舒服</div>
-        <button className="cart-button" onClick={() => setCartCount((count) => count + 1)} aria-label="购物车">购物车 <b>{cartCount}</b></button>
-      </header>
-
-      <main>
-        <section className="intro">
-          <p className="eyebrow">NEW DAILY EDIT</p>
-          <h1>给生活添一点<br /><em>柔软与秩序</em></h1>
-          <p className="intro-copy">从厨房到浴室，精选一组实用、耐看的家居小物，让每一个角落都更从容。</p>
-        </section>
-
-        <section className="catalog" aria-label="家居商品目录">
-          <div className="catalog-bar">
-            <div><span className="catalog-label">新增商品</span><span className="catalog-count">{visibleProducts.length} 件</span></div>
-            <nav className="filters" aria-label="商品分类">
-              {categories.map((item) => <button className={category === item ? 'active' : ''} key={item} onClick={() => setCategory(item)}>{item}</button>)}
-            </nav>
-          </div>
-          <div className="product-grid">
-            {visibleProducts.map((product) => (
-              <article className="product-card" key={product.id}>
-                <div className="product-image"><img src={`/products/${product.image}`} alt={product.description} loading="lazy" /><span>{String(product.id).padStart(2, '0')}</span></div>
-                <div className="product-info"><div><p className="product-category">{product.category}</p><h2>{product.name}</h2><p className="description">{product.description}</p></div><div className="product-bottom"><strong>¥{product.price}</strong><button onClick={() => setCartCount((count) => count + 1)}>加入购物车</button></div></div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </main>
-      <footer><span>TIME HOUSEHOLD LIFE HALL</span><span>EVERYDAY OBJECTS, CONSIDERED.</span></footer>
-    </div>
-  )
-}
+function ProductCard({ product, add, buy }) { return <article className="product-card"><div className="product-image"><img src={`/products/${product.image}`} alt={product.description} loading="lazy" /><span>{String(product.id).padStart(2, '0')}</span></div><div className="product-info"><p className="product-type">{product.type}</p><h3>{product.name}</h3><p className="description">{product.description}</p><div className="product-bottom"><strong>${product.price}</strong><div className="actions"><button onClick={() => add(product)}>Add to Cart</button><button className="buy" onClick={() => buy(product)}>Buy Now - ${product.price}</button></div></div></div></article> }
+function Cart({ cart, total, close, checkout }) { return <div className="overlay"><aside className="drawer"><button className="close" onClick={close}>×</button><p className="eyebrow">YOUR BAG</p><h2>{cart.length ? `${cart.length} items` : 'Your bag is empty'}</h2>{cart.map((item, index) => <div className="bag-item" key={`${item.id}-${index}`}><img src={`/products/${item.image}`} alt="" /><span>{item.name}<b>${item.price}</b></span></div>)}{cart.length > 0 && <><div className="total"><span>Total</span><b>${total}</b></div><button className="primary full" onClick={checkout}>Go to checkout →</button></>}</aside></div> }
+function Policy({ data, close }) { return <div className="overlay"><div className="modal"><button className="close" onClick={close}>×</button><p className="eyebrow">INFORMATION</p><h2>{data[0]}</h2><p>{data[1]}</p></div></div> }
+function Footer({ setPage, setPolicy }) { const links = [['Shop', ['about', 'shipping', 'tracking']], ['Help', ['payment', 'returns', 'cancellation']], ['Legal', ['terms', 'privacy', 'dmca']]]; return <footer className="footer"><div className="footer-grid"><div><button className="brand" onClick={() => setPage('home')}>TIME / HOUSEHOLD <span>LIFE HALL</span></button><p>Thoughtful goods for everyday living.</p></div>{links.map(([title, keys]) => <div className="footer-col" key={title}><b>{title}</b>{keys.map((key) => <button key={key} onClick={() => setPolicy(key)}>{policyData[key][0]}</button>)}</div>)}<div className="footer-col contact"><b>拾光（香港）貿易有限公司</b><span>Tymelight@outlook.com</span><span>UNIT D931, 4/F, HK SPINNERS INDBLDG PHASE 5, 760 CHEUNG SHA WAN ROAD, LAI CHI KOK, HONG KONG</span></div></div><div className="footer-bottom"><span>© 2026 拾光（香港）貿易有限公司</span><button onClick={() => setPage('admin')}>Admin demo</button></div></footer> }
+function Checkout({ cart, total, back }) { const [done, setDone] = useState(false); return <div className="site"><header className="header"><button className="brand" onClick={back}>TIME / HOUSEHOLD <span>LIFE HALL</span></button><button className="text-button" onClick={back}>← Continue shopping</button></header>{done ? <section className="success"><p className="eyebrow">DEMO ORDER RECEIVED</p><h1>Thank you.</h1><p>No payment was charged. This is a demo checkout.</p><button className="primary" onClick={back}>Back to shop</button></section> : <section className="checkout-grid"><div><p className="eyebrow">CHECKOUT</p><h1>Complete your order.</h1><form onSubmit={(event) => { event.preventDefault(); setDone(true) }}><input required type="email" placeholder="Email address" /><input required placeholder="Full name" /><input required placeholder="Shipping address" /><div className="payments"><label><input type="radio" name="payment" defaultChecked /> <b className="paypal">PayPal</b></label><label><input type="radio" name="payment" /> <b className="visa">VISA</b></label><label><input type="radio" name="payment" /> ▣ Credit card</label></div><button className="primary full">Place demo order · ${total}</button></form></div><div className="summary"><p className="eyebrow">SUMMARY</p>{cart.map((item, index) => <div className="summary-row" key={`${item.id}-${index}`}><span>{item.name}</span><b>${item.price}</b></div>)}<div className="total"><span>Total</span><b>${total}</b></div></div></section>}</div> }
+function Admin({ back }) { const [ok, setOk] = useState(false); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); return <div className="site"><header className="header"><button className="brand" onClick={back}>TIME / HOUSEHOLD <span>LIFE HALL</span></button><button className="text-button" onClick={back}>← Back to store</button></header>{ok ? <section className="success"><p className="eyebrow">DEMO ADMIN</p><h1>Catalog overview.</h1><p>50 products / 5 categories / Demo mode only.</p><button className="primary" onClick={back}>Return to store</button></section> : <form className="admin-login" onSubmit={(event) => { event.preventDefault(); if (email === 'admin@timehouseholdlifehall.com' && password === 'ShiguangDemo2026!') setOk(true) }}><p className="eyebrow">DEMO ADMIN LOGIN</p><h1>Welcome back.</h1><input required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" /><input required value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Password" /><button className="primary full">Sign in</button><small>Demo interface only. No real authentication.</small></form>}</div> }
+function App() { const [selected, setSelected] = useState('All products'); const [cart, setCart] = useState([]); const [drawer, setDrawer] = useState(false); const [page, setPage] = useState('home'); const [policy, setPolicy] = useState(null); const categories = ['All products', ...groups.map(([name]) => name)]; const visible = useMemo(() => selected === 'All products' ? products : products.filter((product) => product.category === selected), [selected]); const add = (product) => { setCart((items) => [...items, product]); setDrawer(true) }; const buy = (product) => { setCart([product]); setPage('checkout') }; const total = cart.reduce((sum, item) => sum + item.price, 0); if (page === 'checkout') return <Checkout cart={cart} total={total} back={() => setPage('home')} />; if (page === 'admin') return <Admin back={() => setPage('home')} />; return <div className="site"><header className="header"><button className="brand" onClick={() => { setPage('home'); setSelected('All products') }}>TIME / HOUSEHOLD <span>LIFE HALL</span></button><nav className="nav">{categories.slice(0, 4).map((category) => <button key={category} onClick={() => setSelected(category)}>{category}</button>)}</nav><button className="cart" onClick={() => setDrawer(true)}>Bag <b>{cart.length}</b></button></header><section className="hero"><div><p className="eyebrow">THE EVERYDAY EDIT / 2026</p><h1>Objects for<br /><i>a slower home.</i></h1><p>家具、软装与日常用品，围绕真实生活挑选。让空间更安静，也更好用。</p><button className="primary" onClick={() => setSelected('All products')}>Explore the collection <span>→</span></button></div><div className="stamp">SHIGUANG<br />HOME GOODS<br /><small>EST. 2026</small></div></section><section className="intro"><span>01 / A considered collection</span><p>从一把椅子到一只纸巾盒，每个产品都保留材质的自然质感和生活的余地。</p></section><main className="catalog"><div className="catalog-head"><div><p className="eyebrow">SHOP THE COLLECTION</p><h2>{selected === 'All products' ? 'All the good things' : selected}</h2></div><span>{visible.length} pieces</span></div><div className="filters">{categories.map((category) => <button className={selected === category ? 'active' : ''} key={category} onClick={() => setSelected(category)}>{category}</button>)}</div><div className="product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} add={add} buy={buy} />)}</div></main><Footer setPage={setPage} setPolicy={setPolicy} />{drawer && <Cart cart={cart} total={total} close={() => setDrawer(false)} checkout={() => { setDrawer(false); setPage('checkout') }} />}{policy && <Policy data={policyData[policy]} close={() => setPolicy(null)} />}</div> }
+document.addEventListener('click', (event) => {
+  const button = event.target.closest('.nav button')
+  if (button) setTimeout(() => document.querySelector('.catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
+})
 
 createRoot(document.getElementById('root')).render(<App />)
