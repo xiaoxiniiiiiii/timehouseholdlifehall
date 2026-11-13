@@ -26,5 +26,6 @@ for (const [file, cols, rows] of sheets) {
   }
 }
 await sharp(path.join(root, 'exec-3bbc7a07-7948-4efd-92e7-3d5bfd384206.png')).resize(720, 720, { fit: 'cover' }).webp({ quality: 84 }).toFile(path.join(out, 'catalog-28.webp'))
+await sharp(path.join(root, 'exec-07f0950d-0497-4785-8465-de30595768c8.png')).resize(720, 720, { fit: 'cover' }).webp({ quality: 84 }).toFile(path.join(out, 'catalog-36.webp'))
 await sharp(path.join(root, 'exec-bacd2f08-da34-46b6-916d-e34f9568ca51.png')).resize(720, 720, { fit: 'cover' }).webp({ quality: 84 }).toFile(path.join(out, 'catalog-41.webp'))
 console.log('Created 50 local WebP product images.')
